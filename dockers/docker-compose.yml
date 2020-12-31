@@ -1,0 +1,18 @@
+
+version: "3"
+services:
+  agnia-backend:
+    image: ecscputascks
+    volumes:
+      - ../:/opt/monitor-ecs
+    ports:
+      - "5000:5000"
+    environment:
+      - SETTING1=Test
+      - SETTING2=Test2
+      - DATABASE=ecs_cluster.db
+      - FLASK_ENV=development
+      - FLASK_APP=main.py
+
+    # command: tail -f /var/log/dnf.log
+    command: flask run --host=0.0.0.0

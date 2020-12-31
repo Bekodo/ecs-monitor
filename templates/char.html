@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{{title}} </title>
+    </head>
+    <body>
+        <div class="container">
+            <p>Loop through the list:</p>
+            <ul>
+              {% for key, value in context.items() %}
+                <li>{{key}} -> {{value}}</li>
+              {% endfor %}
+            </ul>
+        </div>
+    </body>
+</html>
