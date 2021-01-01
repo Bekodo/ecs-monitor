@@ -1,16 +1,71 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html>
-    <head>
-        <title>{{title}} </title>
-    </head>
-    <body>
-        <div class="container">
-            <p>Loop through the list:</p>
-            <ul>
-              {% for key, value in context.items() %}
-                <li>{{key}} -> {{value}}</li>
-              {% endfor %}
-            </ul>
-        </div>
-    </body>
+<head>
+  <style>
+    body {
+      background-color:#2a2a2a;
+    }
+  </style>  
+  <script type="text/javascript">
+  window.onload = function () {
+    CanvasJS.addColorSet("greenShades",
+                        ["#2F4F4F",
+                        "#008080",
+                        "#2E8B57",
+                        "#3CB371",
+                        "#90EE90"                
+                        ]);
+    var cpuChart = new CanvasJS.Chart("cpuChart",{
+      theme: "dark1",
+      colorSet: "greenShades",
+      axisY:[
+        {
+          title: "CPU %",
+        },
+      ],
+      data: [{   
+        type: "area",
+        fillOpacity: .6,
+        dataPoints: [        
+          {% for key, value in context.items() %}
+          { x: new Date("{{key}}"), y: {{value['cpu']}} },
+          {% endfor %}
+        ]
+      },
+      ]
+    });
+
+    cpuChart.render();
+
+    var taskChart = new CanvasJS.Chart("taskChart",{
+      theme: "dark1",
+      axisY:[
+        {
+          title: "Tasks",
+        }
+      ],
+      data: [{
+        color: "green",
+        type: "column",
+        fillOpacity: .4,
+        axisYIndex: 1,
+        dataPoints: [        
+          {% for key, value in context.items() %}
+          { x: new Date("{{key}}"), y: {{value['task']}} },
+          {% endfor %}
+        ]
+      },
+      ]
+    });
+
+    taskChart.render();
+  }
+  </script>
+  <script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+</head>
+<body>
+  <div id="cpuChart" style="height: 300px; width: 50%;"></div>
+  <div id="taskChart" style="height: 300px; width: 50%;"></div>
+
+</body>
 </html>
