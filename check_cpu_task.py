@@ -1,4 +1,4 @@
-#!/opt/local/bin/python
+#!/usr/bin/python3
 
 import boto3
 from datetime import datetime, timedelta
@@ -82,8 +82,7 @@ if __name__ == '__main__':
     ClodWatch = Monitor()
     taskscount = ClodWatch.getTasksCount()
     data = ClodWatch.getCPU()
-    print('{} {}'.format(data, taskscount))
-    # ClodWatch.saveData(data, taskscount)
+    ClodWatch.saveData(data, taskscount)
     
 
 
