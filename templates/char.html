@@ -1,6 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
+  <title>{{ title }}</title>
   <style>
     body {
       background-color:#2a2a2a;
@@ -37,6 +38,27 @@
 
     cpuChart.render();
 
+    var memChart = new CanvasJS.Chart("memChart",{
+      theme: "dark1",
+      axisY:[
+        {
+          title: "Memory %",
+        },
+      ],
+      data: [{   
+        type: "area",
+        fillOpacity: .6,
+        dataPoints: [        
+          {% for key, value in context.items() %}
+          { x: new Date("{{key}}"), y: {{value['mem']}} },
+          {% endfor %}
+        ]
+      },
+      ]
+    });
+
+    memChart.render();
+
     var taskChart = new CanvasJS.Chart("taskChart",{
       theme: "dark1",
       axisY:[
@@ -65,7 +87,7 @@
 </head>
 <body>
   <div id="cpuChart" style="height: 300px; width: 50%;"></div>
+  <div id="memChart" style="height: 300px; width: 50%;"></div>
   <div id="taskChart" style="height: 300px; width: 50%;"></div>
-
 </body>
 </html>
