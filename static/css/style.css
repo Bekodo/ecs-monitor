@@ -41,9 +41,10 @@ a:active {
 	font-weight: bold;
 }
 
-@media screen and (max-device-width: 768px) {
+@media only screen and (max-device-width: 768px) {
 	.nav-item{
-		font-size: 18px;
+		font-size: 2.40rem;
+		font-weight: bold;
 	}
 	.mychart {
 		margin: 0 auto;
