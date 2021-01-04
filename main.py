@@ -9,6 +9,7 @@ app = Flask(__name__,static_url_path='/ecs/blocs-pro/static')
 @app.route('/ecs/blocs-pro/<period>')
 def graphs(period):
     periods = {'3h': '-3 hours', '6h': '-6 hours', '12h': '-12 hours', '1d': '-1 days', '3d': '-3 days', '1w': '-7 days', '1m': '-1 month',}
+    period = (period if period in periods else '1d')
     sqlperiod = periods.get(period, '-1 days')
     context = {}
     sql = "select TIME,CPU,TASKCOUNT,MEM from ecs_cluster_blocs_pro WHERE TIME > datetime('now', '" + sqlperiod + "') ORDER BY TIME ASC"

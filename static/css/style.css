@@ -29,13 +29,26 @@ a:active {
 }
 
 /* New styles */
-.nav{
+
+.mychart {
+	margin: 0 auto;
+	height: 300px;
+	width: 44%;
+}
+
+.nav-item{
 	font-size: 1.75rem;
 	font-weight: bold;
 }
-@media (max-width: 767px) {
-	.nav{
+
+@media screen and (max-device-width: 768px) {
+	.nav-item{
 		font-size: 18px;
+	}
+	.mychart {
+		margin: 0 auto;
+		height: 300px;
+		width: 100%;
 	}
 }
 
