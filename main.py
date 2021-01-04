@@ -11,7 +11,7 @@ def graphs(period):
     periods = {'3h': '-3 hours', '6h': '-6 hours', '12h': '-12 hours', '1d': '-1 days', '3d': '-3 days', '1w': '-7 days', '1m': '-1 month',}
     sqlperiod = periods.get(period, '-1 days')
     context = {}
-    sql = "select TIME,CPU,TASKCOUNT,MEM from ecs_cluster_blocs_pro WHERE TIME > datetime('now', '" + sqlperiod + "')"
+    sql = "select TIME,CPU,TASKCOUNT,MEM from ecs_cluster_blocs_pro WHERE TIME > datetime('now', '" + sqlperiod + "') ORDER BY TIME ASC"
     for line in query_db(sql):
         cpu = (line[1] if line[1] else 0)
         task = (line[2] if line[2] else 0)
