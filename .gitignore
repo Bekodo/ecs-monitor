@@ -131,3 +131,4 @@ dmypy.json
 # By me
 check_cpu_num_task.py
 ecs_cluster.db
+check_cpu_mem_task.py
