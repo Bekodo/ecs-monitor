@@ -1,12 +1,7 @@
-<!DOCTYPE HTML>
-<html>
-<head>
-  <title>{{ title }}</title>
-  <style>
-    body {
-      background-color:#2a2a2a;
-    }
-  </style>  
+{% extends "base.html" %}
+
+  {% block script %}
+
   <script type="text/javascript">
   window.onload = function () {
     CanvasJS.addColorSet("greenShades",
@@ -84,10 +79,10 @@
   }
   </script>
   <script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
-</head>
-<body>
-  <div id="cpuChart" style="height: 300px; width: 50%;"></div>
-  <div id="memChart" style="height: 300px; width: 50%;"></div>
-  <div id="taskChart" style="height: 300px; width: 50%;"></div>
-</body>
-</html>
+{% endblock %}
+
+{% block content %}
+    <div id="cpuChart" style="height: 300px; width: 40%;margin: 0 auto;"></div>
+    <div id="memChart" style="height: 300px; width: 40%;margin: 0 auto;"></div>
+    <div id="taskChart" style="height: 300px; width: 40%;margin: 0 auto;"></div>
+{% endblock %}

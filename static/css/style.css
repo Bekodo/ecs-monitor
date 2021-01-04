@@ -1,0 +1,65 @@
+body {
+    background-color:#2a2a2a;
+  }
+
+/* Not being used */
+table {
+	border-collapse: collapse;
+}
+th, td {
+	width: 380px;
+}
+p {
+	font-size: 30px;
+	text-align: center;
+}
+
+a:link {
+	text-decoration: none;
+}
+a:visited {
+	text-decoration: none;
+}
+a:hover {
+	text-decoration: underline;
+	color:#52524f
+}
+a:active {
+	text-decoration: underline;
+}
+
+/* New styles */
+.nav{
+	font-size: 1.75rem;
+	font-weight: bold;
+}
+@media (max-width: 767px) {
+	.nav{
+		font-size: 18px;
+	}
+}
+
+.nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
+    color: #495057;
+    background-color: #2a2a2a;
+    border-color: #dee2e6 #dee2e6 #fff;
+}
+
+.nav-link {
+	color: #495057;
+}
+
+.chart-container{
+	text-align: center;
+}
+.chart-title{
+	font-size: 1.25rem;
+}
+.custom-col-padding-5 .col-6{
+	padding-left: 5px;
+	padding-right: 5px;
+}
+.custom-col-padding-5.row{
+	margin-left: -5px;
+	margin-right: -5px;
+}
