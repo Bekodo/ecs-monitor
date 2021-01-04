@@ -33,24 +33,23 @@ class Monitor(object):
         except Error as e:
             print(e)
 
-    def _setCloudWatchDimensions(self):
+     def _setCloudWatchDimensions(self):
         dimension = {
             'Namespace' : '',
             'MetricName' : '',
             'Dimensions' : [],
         }
         dimension['Namespace'] = 'AWS/ECS'
-        dimension['MetricName'] = 'CPUUtilization'
         dimension['Dimensions'].append({'Name': 'ClusterName', 'Value': self.cluster})
         dimension['Dimensions'].append({'Name': 'ServiceName', 'Value': self.service})
         return dimension
 
-    def getCPU(self):
+    def getMetric(self,metric):
         dimension = self._setCloudWatchDimensions()
         NowTime = self.now_timezone - timedelta(minutes=0) 
         response = self.cloudwatch.get_metric_statistics(
             Namespace = dimension['Namespace'],
-            MetricName = dimension['MetricName'],
+            MetricName = metric,
             Dimensions = dimension['Dimensions'],
             StartTime = self.now_timezone - timedelta(minutes=5),
             EndTime = NowTime,
@@ -58,7 +57,7 @@ class Monitor(object):
             Statistics = ['Average'],
             Unit = 'Percent'
         )
-        return {'date': NowTime , 'cpu': round(response['Datapoints'][0].get('Average'),2)}
+        return {'date': NowTime , metric: round(response['Datapoints'][0].get('Average'),2)}
 
     def getTasksCount(self):
         response = self.ecs.describe_services(
@@ -66,23 +65,22 @@ class Monitor(object):
             services = [self.service])
         return response.get('services')[0].get('runningCount')
 
-    def saveData(self,data,taskscount):
+    def saveData(self,data):
         fmt = "%Y-%m-%d %H:%M:%S"
-        cpudata = (data.get('date').strftime(fmt), data.get('cpu', 0), taskscount)
-        sql = ''' INSERT INTO ecs_cluster_blocs_pro(TIME,CPU,TASKCOUNT)
-              VALUES(?,?,?) '''
+        sqlparams = (data.get('cpu').get('date').strftime(fmt),  data.get('cpu', 0).get('CPUUtilization'), data.get('mem', 0).get('MemoryUtilization'), data.get('tasks', 0))
+        sql = ''' INSERT INTO ecs_cluster_blocs_pro(TIME, CPU, MEM, TASKCOUNT)
+              VALUES(?,?,?,?) '''
         try:
             cur = self.conn.cursor()
-            cur.execute(sql, cpudata)
+            cur.execute(sql, sqlparams)
             self.conn.commit()
         except sqlite3.Error as error:
             print("{} {}".format(self.now_timezone.strftime(fmt), error))
 
 if __name__ == '__main__':
     ClodWatch = Monitor()
-    taskscount = ClodWatch.getTasksCount()
-    data = ClodWatch.getCPU()
-    ClodWatch.saveData(data, taskscount)
-    
-
-
+    data = {}  
+    data['tasks'] = ClodWatch.getTasksCount()
+    data['cpu'] = ClodWatch.getMetric('CPUUtilization')
+    data['mem'] = ClodWatch.getMetric('MemoryUtilization')
+    ClodWatch.saveData(data)
