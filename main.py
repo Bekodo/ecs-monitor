@@ -19,7 +19,7 @@ def chartimage(metric,period):
         filename = createrrdimagetask(settings.RRDFILE, period)
     else:
         filename = createrrdimagecpu(settings.RRDFILE, period)
-    return send_file(filename, mimetype='image/gif')
+    return send_file(filename, mimetype='image/png', cache_timeout=-1)
     
 @app.route('/ecs/blocs-pro/<metric>')
 def chartpage(metric):
