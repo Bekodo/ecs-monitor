@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block script %}
+{% endblock %}
+
+{% block content %}
+<div id="content" class="row custom-col-padding-3">
+	<div class="col-6 col-lg-3 chart-container">
+	<div class="chart-title"><a href="/ecs/blocs-pro/cpu">blocs-pro cpu</a></div>
+	<img src="/ecs/blocs-pro/img/cpu/1d" class="img-fluid">
+	</div>
+
+	<div class="col-6 col-lg-3 chart-container">
+	<div class="chart-title"><a href="/ecs/blocs-pro/mem">blocs-pro mem</a></div>
+	<img src="/ecs/blocs-pro/img/mem/1d" class="img-fluid">
+	</div>
+
+	<div class="col-6 col-lg-3 chart-container">
+	<div class="chart-title"><a href="/ecs/blocs-pro/task">blocs-pro task</a></div>
+	<img src="/ecs/blocs-pro/img/task/1d" class="img-fluid">
+	</div>
+</div>
+{% endblock %}

@@ -17,9 +17,12 @@
   <div class="container-fluid">
     <div id="nav">
       <ul class="nav nav-tabs justify-content-center">
-      {% for key, value in periods.items() %}
         <li class="nav-item">
-          <a class="nav-link {% if key == period %} active{% else %}{% endif %}" href="/ecs/blocs-pro/{{ key }}">{{ key }}</a>
+          <a class="nav-link " href="/ecs/blocs-pro/">all</a>
+        </li>
+      {% for item in metrics %}
+        <li class="nav-item">
+          <a class="nav-link {% if item == period %} active{% else %}{% endif %}" href="/ecs/blocs-pro/{{ item }}">{{ item }}</a>
         </li>
       {% endfor %}
       </ul>

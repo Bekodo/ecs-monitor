@@ -1,15 +1,77 @@
-import settings
-from flask import g
-import sqlite3
+import rrdtool
+import tempfile
+import datetime
+from pytz import timezone
 
-def get_db():
-    db = getattr(g, '_database', None)
-    if db is None:
-        db = g._database = sqlite3.connect(settings.DATABASE)
-    return db
+periods = {'1d': 'end-1d', '1w': 'end-1w', '1m': 'end-1m',}
+metrics = ['cpu','mem','task']
 
-def query_db(query, args=(), one=False):
-    cur = get_db().execute(query, args)
-    rv = cur.fetchall()
-    cur.close()
-    return (rv[0] if rv else None) if one else rv
+fmt = "%d-%m-%Y %H\:%M"
+stimezone = 'Europe/Dublin'
+now_utc = datetime.datetime.now()
+amsterdam_tz = timezone('Europe/Amsterdam')
+now_tz = amsterdam_tz.localize(now_utc)
+dublin_tz = timezone(stimezone)
+now_timezone = now_tz.astimezone(dublin_tz)
+strdate = now_timezone.strftime(fmt)
+handle, filepath = tempfile.mkstemp(suffix = '.png')
+
+def createrrdimagecpu(rrdfile, period='1d'):
+    try:
+        rrdtool.graph(str(filepath), "-s", "%s" % periods.get(period), "-e", "now",
+            "--width=380", "--height=140", "--rigid",
+            '--alt-autoscale-max', '--lower-limit=0',
+            "--title=CPU Metrics",
+            "--color=CANVAS#222225",
+            "--color=FONT#FFFFFF",
+            "--color=BACK#222225",
+            "DEF:cpu=%s:cpu:AVERAGE" % rrdfile,
+            "LINE1:cpu#00CF00FF:Cpu",
+            "AREA:cpu#00CF0033",
+            r"GPRINT:cpu:LAST:Current\: %6.2lf %s",
+            r"GPRINT:cpu:AVERAGE:Average\: %6.2lf %s",
+            r"GPRINT:cpu:MAX:Maximum\: %6.2lf %s\n",
+            r"COMMENT:Last updated\: %s\r" % strdate)
+    except Exception as e:
+        print(e)
+    return filepath
+
+def createrrdimagemem(rrdfile, period='1d'):
+    try:
+        rrdtool.graph(str(filepath), "-s", "%s" % periods.get(period), "-e", "now",
+            "--width=380", "--height=140", "--rigid",
+            '--alt-autoscale-max', '--lower-limit=0',
+            "--title=Memory Metrics",
+            "--color=CANVAS#222225",
+            "--color=FONT#FFFFFF",
+            "--color=BACK#222225",
+            "DEF:mem=%s:mem:AVERAGE" % rrdfile,
+            "LINE1:mem#005199FF:Mem",
+            "AREA:mem#00519933",
+            r"GPRINT:mem:LAST:Current\:%6.2lf %s",
+            r"GPRINT:mem:AVERAGE:Average\:%6.2lf %s",
+            r"GPRINT:mem:MAX:Maximum\:%6.2lf %s\n",
+            r"COMMENT:Last updated\: %s\r" % strdate)
+    except Exception as e:
+        print(e)
+    return filepath
+
+def createrrdimagetask(rrdfile, period='1d'):
+    try:
+        rrdtool.graph(str(filepath), "-s", "%s" % periods.get(period), "-e", "now",
+            "--width=380", "--height=140", "--rigid",
+            '--alt-autoscale-max', '--lower-limit=0',
+            "--title=Tasks Metrics",
+            "--color=CANVAS#222225",
+            "--color=FONT#FFFFFF",
+            "--color=BACK#222225",
+            "DEF:task=%s:task:AVERAGE" % rrdfile,
+            "LINE1:task#008199FF:Task",
+            "AREA:task#00819933",
+            r"GPRINT:task:LAST:Current\:%6.2lf %s",
+            r"GPRINT:task:AVERAGE:Average\:%6.2lf %s",
+            r"GPRINT:task:MAX:Maximum\:%6.2lf %s\n",
+            r"COMMENT:Last updated\: %s\r" % strdate)
+    except Exception as e:
+        print(e)
+    return filepath

@@ -1,31 +1,31 @@
-#!/usr/bin/python3
+#!/opt/local/bin/python3.7
 
 import settings
-from flask import Flask, g, render_template, redirect, url_for
-from functions import get_db, query_db
+from functions import periods, metrics, createrrdimagecpu, createrrdimagemem, createrrdimagetask
+from flask import Flask, render_template, redirect, url_for, send_file
+import rrdtool
 
 app = Flask(__name__,static_url_path='/ecs/blocs-pro/static')
 
-@app.route('/ecs/blocs-pro/<period>')
-def graphs(period):
-    periods = {'3h': '-3 hours', '6h': '-6 hours', '12h': '-12 hours', '1d': '-1 days', '3d': '-3 days', '1w': '-7 days', '1m': '-1 month',}
+@app.route('/ecs/blocs-pro/img/<metric>/<period>')
+def chartimage(metric,period):
     period = (period if period in periods else '1d')
-    sqlperiod = periods.get(period, '-1 days')
-    context = {}
-    sql = "select TIME,CPU,TASKCOUNT,MEM from ecs_cluster_blocs_pro WHERE TIME > datetime('now', '" + sqlperiod + "') ORDER BY TIME ASC"
-    for line in query_db(sql):
-        cpu = (line[1] if line[1] else 0)
-        task = (line[2] if line[2] else 0)
-        mem = (line[3] if line[3] else 0)
-        context[line[0]]={'cpu':cpu,'task':task,'mem':mem}
-    return render_template('char.html', title='Graph Stats', period=period, periods=periods, context=context)
+    metric = (metric if metric in metrics else 'cpu')
+    if (metric == 'cpu'):
+        filename = createrrdimagecpu(settings.RRDFILE, period)
+    elif (metric == 'mem'):
+        filename = createrrdimagemem(settings.RRDFILE, period)
+    elif (metric == 'task'):
+        filename = createrrdimagetask(settings.RRDFILE, period)
+    else:
+        filename = createrrdimagecpu(settings.RRDFILE, period)
+    return send_file(filename, mimetype='image/gif')
+    
+@app.route('/ecs/blocs-pro/<metric>')
+def chartpage(metric):
+    return render_template('metric.html', title='Graph Stats', metric=metric, metrics=metrics)
 
 @app.route('/ecs/blocs-pro/')
 def index():
-    return redirect(url_for('graphs',period='1d'))
+    return render_template('index.html', title='Graph Stats', metrics=metrics)
 
-@app.teardown_appcontext
-def close_connection(exception):
-    db = getattr(g, '_database', None)
-    if db is not None:
-        db.close()
