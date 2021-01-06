@@ -15,7 +15,7 @@ now_tz = amsterdam_tz.localize(now_utc)
 dublin_tz = timezone(stimezone)
 now_timezone = now_tz.astimezone(dublin_tz)
 strdate = now_timezone.strftime(fmt)
-# handle, filepath = tempfile.mkstemp(suffix = '.png')
+
 filepath = path.abspath(getcwd())
 filepath += '/rrdtool/img/'
 
@@ -38,7 +38,6 @@ def createrrdimagecpu(rrdfile, period='1d'):
             r"COMMENT:Last updated\: %s\r" % strdate)
     except Exception as e:
         print(e)
-    print(fileimage)
     return fileimage
 
 def createrrdimagemem(rrdfile, period='1d'):
@@ -60,7 +59,6 @@ def createrrdimagemem(rrdfile, period='1d'):
             r"COMMENT:Last updated\: %s\r" % strdate)
     except Exception as e:
         print(e)
-    print(fileimage)
     return fileimage
 
 def createrrdimagetask(rrdfile, period='1d'):
@@ -82,5 +80,4 @@ def createrrdimagetask(rrdfile, period='1d'):
             r"COMMENT:Last updated\: %s\r" % strdate)
     except Exception as e:
         print(e)
-    print(fileimage)
     return fileimage
