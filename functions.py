@@ -22,7 +22,7 @@ filepath += '/rrdtool/img/'
 def createrrdimagecpu(rrdfile, period='1d'):    
     fileimage = filepath + 'cpu-' + period + '.png'
     try:
-        rrdtool.graph(fileimage, "-s", "%s" % periods.get(period), "-e", "now",
+        rrdtool.graph(str(fileimage), "-s", "%s" % periods.get(period), "-e", "now",
             "--width=380", "--height=140", "--rigid",
             '--alt-autoscale-max', '--lower-limit=0',
             "--title=CPU Metrics",
@@ -43,7 +43,7 @@ def createrrdimagecpu(rrdfile, period='1d'):
 def createrrdimagemem(rrdfile, period='1d'):
     fileimage = filepath + 'mem-' + period + '.png'
     try:
-        rrdtool.graph(fileimage, "-s", "%s" % periods.get(period), "-e", "now",
+        rrdtool.graph(str(fileimage), "-s", "%s" % periods.get(period), "-e", "now",
             "--width=380", "--height=140", "--rigid",
             '--alt-autoscale-max', '--lower-limit=0',
             "--title=Memory Metrics",
@@ -64,7 +64,7 @@ def createrrdimagemem(rrdfile, period='1d'):
 def createrrdimagetask(rrdfile, period='1d'):
     fileimage = filepath + 'task-' + period + '.png'
     try:
-        rrdtool.graph(fileimage, "-s", "%s" % periods.get(period), "-e", "now",
+        rrdtool.graph(str(fileimage), "-s", "%s" % periods.get(period), "-e", "now",
             "--width=380", "--height=140", "--rigid",
             '--alt-autoscale-max', '--lower-limit=0',
             "--title=Tasks Metrics",
