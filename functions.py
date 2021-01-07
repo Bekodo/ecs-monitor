@@ -4,7 +4,6 @@ import datetime
 from pytz import timezone
 from os import path, getcwd
 
-# periods = {'1d': 'end-1d', '1w': 'end-1w', '1m': 'end-1m',}
 periods = {'1d': ['end-1d','Daily'], '1w': ['end-1w','Weekly'], '1m': ['end-1m','Monthly']}
 metrics = ['cpu','mem','task']
 
@@ -20,9 +19,9 @@ strdate = now_timezone.strftime(fmt)
 filepath = path.abspath(getcwd())
 filepath += '/rrdtool/img/'
 
-def createrrdimagecpu(rrdfile, period='1d'):  
+def createrrdimagecpu(rrdfile, period):  
     fileimage = filepath + 'cpu-' + period + '.png'
-    period = periods.get(period)  
+    period = periods.get(period, '1d')
     try:
         rrdtool.graph(str(fileimage), "-s", "%s" % period[0], "-e", "now",
             "--imgformat=PNG",
@@ -36,6 +35,7 @@ def createrrdimagecpu(rrdfile, period='1d'):
             "--font=UNIT:8:",
             "--watermark=Bekodo",
             "--border=0",
+            "--force-rules-legend",
             "DEF:cpu=%s:cpu:AVERAGE" % rrdfile,
             "LINE1:cpu#00CF00FF:Cpu",
             "AREA:cpu#00CF0033",
@@ -47,9 +47,9 @@ def createrrdimagecpu(rrdfile, period='1d'):
         print(e)
     return fileimage
 
-def createrrdimagemem(rrdfile, period='1d'):
+def createrrdimagemem(rrdfile, period):
     fileimage = filepath + 'mem-' + period + '.png'
-    period = periods.get(period)  
+    period = periods.get(period, '1d')
     try:
         rrdtool.graph(str(fileimage), "-s", "%s" % period[0], "-e", "now",
             "--imgformat=PNG",
@@ -63,6 +63,7 @@ def createrrdimagemem(rrdfile, period='1d'):
             "--font=UNIT:8:",
             "--watermark=Bekodo",
             "--border=0",
+            "--force-rules-legend",
             "DEF:mem=%s:mem:AVERAGE" % rrdfile,
             "LINE1:mem#005199FF:Mem",
             "AREA:mem#00519933",
@@ -74,9 +75,9 @@ def createrrdimagemem(rrdfile, period='1d'):
         print(e)
     return fileimage
 
-def createrrdimagetask(rrdfile, period='1d'):
+def createrrdimagetask(rrdfile, period):
     fileimage = filepath + 'task-' + period + '.png'
-    period = periods.get(period)  
+    period = periods.get(period, '1d')
     try:
         rrdtool.graph(str(fileimage), "-s", "%s" % period[0], "-e", "now",
             "--imgformat=PNG",
@@ -90,6 +91,7 @@ def createrrdimagetask(rrdfile, period='1d'):
             "--font=UNIT:8:",
             "--watermark=Bekodo",
             "--border=0",
+            "--force-rules-legend",
             "DEF:task=%s:task:AVERAGE" % rrdfile,
             "LINE1:task#008199FF:Task",
             "AREA:task#00819933",
