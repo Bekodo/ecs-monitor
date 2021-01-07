@@ -42,7 +42,7 @@ a:active {
 	font-weight: bold;
 }
 
-@media only screen and (max-device-width: 768px) {
+@media (max-device-width: 768px) {
 	.nav-item{
 		font-size: 2.40rem;
 		font-weight: bold;
@@ -59,6 +59,6 @@ a:active {
 	color: #495057;
 }
 
-.row {
+.container {
 	margin-top: 20px
 }

@@ -1,25 +1,13 @@
 import rrdtool
-import tempfile
-import datetime
-from pytz import timezone
 from os import path, getcwd
 
 periods = {'1d': ['end-1d','Daily'], '1w': ['end-1w','Weekly'], '1m': ['end-1m','Monthly']}
 metrics = ['cpu','mem','task']
 
-fmt = "%d-%m-%Y %H\:%M"
-stimezone = 'Europe/Dublin'
-now_utc = datetime.datetime.now()
-amsterdam_tz = timezone('Europe/Amsterdam')
-now_tz = amsterdam_tz.localize(now_utc)
-dublin_tz = timezone(stimezone)
-now_timezone = now_tz.astimezone(dublin_tz)
-strdate = now_timezone.strftime(fmt)
-
 filepath = path.abspath(getcwd())
 filepath += '/rrdtool/img/'
 
-def createrrdimagecpu(rrdfile, period):  
+def createrrdimagecpu(rrdfile, period, strdate):  
     fileimage = filepath + 'cpu-' + period + '.png'
     period = periods.get(period, '1d')
     try:
@@ -47,7 +35,7 @@ def createrrdimagecpu(rrdfile, period):
         print(e)
     return fileimage
 
-def createrrdimagemem(rrdfile, period):
+def createrrdimagemem(rrdfile, period, strdate):
     fileimage = filepath + 'mem-' + period + '.png'
     period = periods.get(period, '1d')
     try:
@@ -75,7 +63,7 @@ def createrrdimagemem(rrdfile, period):
         print(e)
     return fileimage
 
-def createrrdimagetask(rrdfile, period):
+def createrrdimagetask(rrdfile, period, strdate):
     fileimage = filepath + 'task-' + period + '.png'
     period = periods.get(period, '1d')
     try:
