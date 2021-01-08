@@ -1,11 +1,14 @@
 import settings
 from functions import periods, metrics, services, createrrdimagecpu, createrrdimagemem, createrrdimagetask
 from flask import Flask, render_template, send_file, request
+from flask_httpauth import HTTPBasicAuth
 import rrdtool
 import datetime
 from pytz import timezone
+from pprint import pprint
 
 app = Flask(__name__,static_url_path='/ecs/monitor/static')
+auth = HTTPBasicAuth()
 
 @app.route('/ecs/monitor/img/<service>/<metric>/<period>')
 def chartimage(service, metric, period):
@@ -22,7 +25,7 @@ def chartimage(service, metric, period):
     metric = (metric if metric in metrics else 'cpu')
     service = (service if service in services else 'blocs-pro')
     rrdfile = settings.RRDPATH + service + '_ecs_mem_cpu_task.rrd'
-    
+
     if (metric == 'cpu'):
         filename = createrrdimagecpu(rrdfile, period, strdate)
     elif (metric == 'mem'):
@@ -35,15 +38,9 @@ def chartimage(service, metric, period):
     
 @app.route('/ecs/monitor/<service>/<metric>')
 def chartpage(service, metric):
-    # auth = request.authentication
-    # username = auth.username
-    username = "hector"
-    return render_template('metric.html', metric=metric, service=service, username=username)
+    return render_template('metric.html', metric=metric, service=service, username=auth.username())
 
 @app.route('/ecs/monitor/')
 def index():
-    # auth = request.authentication
-    # username = auth.username
-    username = "hector"
-    return render_template('index.html', service='blocs-pro', username=username)
+    return render_template('index.html', service='blocs-pro', username=auth.username())
 
