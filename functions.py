@@ -1,8 +1,19 @@
 import rrdtool
 from os import path, getcwd
+import datetime
+from pytz import timezone
 
 periods = {'1d': ['end-1d','Daily'], '1w': ['end-1w','Weekly'], '1m': ['end-1m','Monthly']}
 metrics = ['cpu','mem','task']
+
+fmt = "%d-%m-%Y %H\:%M"
+stimezone = 'Europe/Dublin'
+now_utc = datetime.datetime.now()
+amsterdam_tz = timezone('Europe/Amsterdam')
+now_tz = amsterdam_tz.localize(now_utc)
+dublin_tz = timezone(stimezone)
+now_timezone = now_tz.astimezone(dublin_tz)
+strdate = now_timezone.strftime(fmt)
 
 filepath = path.abspath(getcwd())
 filepath += '/rrdtool/img/'
@@ -23,7 +34,6 @@ def createrrdimagecpu(rrdfile, period, strdate):
             "--font=UNIT:8:",
             "--watermark=Bekodo",
             "--border=0",
-            "--force-rules-legend",
             "DEF:cpu=%s:cpu:AVERAGE" % rrdfile,
             "LINE1:cpu#00CF00FF:Cpu",
             "AREA:cpu#00CF0033",
@@ -51,7 +61,6 @@ def createrrdimagemem(rrdfile, period, strdate):
             "--font=UNIT:8:",
             "--watermark=Bekodo",
             "--border=0",
-            "--force-rules-legend",
             "DEF:mem=%s:mem:AVERAGE" % rrdfile,
             "LINE1:mem#005199FF:Mem",
             "AREA:mem#00519933",
@@ -79,7 +88,6 @@ def createrrdimagetask(rrdfile, period, strdate):
             "--font=UNIT:8:",
             "--watermark=Bekodo",
             "--border=0",
-            "--force-rules-legend",
             "DEF:task=%s:task:AVERAGE" % rrdfile,
             "LINE1:task#008199FF:Task",
             "AREA:task#00819933",

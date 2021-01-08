@@ -136,3 +136,4 @@ rrdtool/ecs_mem_cpu_task.rrd
 rrdtool/check_cpu_num_task_rrd.py
 rrdtool/comandrrd.py
 rrdtool/img/*
+rrdtool/*.rrd
