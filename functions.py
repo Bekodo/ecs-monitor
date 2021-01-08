@@ -1,19 +1,10 @@
+import settings
 import rrdtool
 from os import path, getcwd
-import datetime
-from pytz import timezone
 
-periods = {'1d': ['end-1d','Daily'], '1w': ['end-1w','Weekly'], '1m': ['end-1m','Monthly']}
-metrics = ['cpu','mem','task']
-
-fmt = "%d-%m-%Y %H\:%M"
-stimezone = 'Europe/Dublin'
-now_utc = datetime.datetime.now()
-amsterdam_tz = timezone('Europe/Amsterdam')
-now_tz = amsterdam_tz.localize(now_utc)
-dublin_tz = timezone(stimezone)
-now_timezone = now_tz.astimezone(dublin_tz)
-strdate = now_timezone.strftime(fmt)
+periods = settings.PRERIODS
+metrics = settings.METRICS
+services = settings.SERVICES
 
 filepath = path.abspath(getcwd())
 filepath += '/rrdtool/img/'
