@@ -2,7 +2,6 @@
 
 import rrdtool
 
-
 #Reference https://apfelboymchen.net/gnu/rrd/create/
 #http://rrdwizard.appspot.com/
 
