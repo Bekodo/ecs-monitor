@@ -57,21 +57,23 @@
             </div>
 
             <!-- Nav Item - Pages Collapse Menu -->
-            <li class="nav-item active">
+            {% for service in services %}
+            <li class="nav-item {% if service %}active{% else %}{% endif %}">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
                     aria-expanded="true" aria-controls="collapseTwo">
                     <i class="fas fa-fw fa-chart-area"></i>
-                    <span>Blocs-pro</span>
+                    <span>{{ service|capitalize }}</span>
                 </a>
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Metrics:</h6>
-                        <a class="collapse-item" href="/ecs/monitor/{{ service }}/cpu">CPU</a>
-                        <a class="collapse-item" href="/ecs/monitor/{{ service }}/mem">MEM</a>
-                        <a class="collapse-item" href="/ecs/monitor/{{ service }}/task">TASK</a>
+                        {% for metric in metrics%}
+                        <a class="collapse-item" href="/ecs/monitor/{{ service }}/{{ metric }}">{{ metric|upper }}</a>
+                        {% endfor %}
                     </div>
                 </div>
             </li>
+            {% endfor %}
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
@@ -121,27 +123,15 @@
 
                     <!-- Content Row -->
                     <div class="row">
+                        {% for period in periods.keys() %}
                         <div class="card-body">
                             <div class="chart-area">
                                 <div class="row no-gutters align-items-center">
-                                    <img src="/ecs/monitor/img/{{ service }}/{{ metric }}/1d" class="img-fluid" alt="Responsive image">
+                                    <img src="/ecs/monitor/img/{{ service }}/{{ metric }}/{{ period }}" class="img-fluid" alt="Responsive image">
                                 </div>
                             </div>
                         </div>
-                        <div class="card-body">
-                            <div class="chart-area">
-                                <div class="row no-gutters align-items-center">
-                                    <img src="/ecs/monitor/img/{{ service }}/{{ metric }}/1w" class="img-fluid" alt="Responsive image">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="chart-area">
-                                <div class="row no-gutters align-items-center">
-                                    <img src="/ecs/monitor/img/{{ service }}/{{ metric }}/1m" class="img-fluid" alt="Responsive image">
-                                </div>
-                            </div>
-                        </div>
+                        {% endfor %}
                     </div>
                 </div>
             <!-- End of Main Content -->
@@ -150,7 +140,7 @@
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; Bekodo S.L. 2021</span>
+                        <span>Copyright &copy; Bekodo Data Services S.L. 2021</span>
                     </div>
                 </div>
             </footer>

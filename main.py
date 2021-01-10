@@ -38,9 +38,9 @@ def chartimage(service, metric, period):
     
 @app.route('/ecs/monitor/<service>/<metric>')
 def chartpage(service, metric):
-    return render_template('metric.html', metric=metric, service=service, username=auth.username())
+    return render_template('metric.html', metrics=settings.METRICS, services=settings.SERVICES, periods=settings.PRERIODS, metric=metric, service=service, username=auth.username())
 
 @app.route('/ecs/monitor/')
 def index():
-    return render_template('index.html', service='blocs-pro', username=auth.username())
+    return render_template('index.html', metrics=settings.METRICS, services=settings.SERVICES, username=auth.username())
 
