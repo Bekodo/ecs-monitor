@@ -137,3 +137,4 @@ rrdtool/check_cpu_num_task_rrd.py
 rrdtool/comandrrd.py
 rrdtool/img/*
 rrdtool/*.rrd
+rrdtool/calculate_mod.py
