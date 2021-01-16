@@ -3,7 +3,8 @@ from functions import periods, metrics, services, createrrdimagecpu, createrrdim
 from flask import Flask, render_template, send_file, request
 from flask_httpauth import HTTPBasicAuth
 import rrdtool
-import datetime
+import tempfile
+from datetime import datetime
 from pytz import timezone
 from pprint import pprint
 
