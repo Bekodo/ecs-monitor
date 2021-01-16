@@ -12,19 +12,19 @@ auth = HTTPBasicAuth()
 
 @app.route('/ecs/monitor/img/<service>/<metric>/<period>')
 def chartimage(service, metric, period):
-    fmt = "%d-%m-%Y %H\:%M"
-    stimezone = 'Europe/Dublin'
-    now_utc = datetime.datetime.now()
-    amsterdam_tz = timezone('Europe/Amsterdam')
-    now_tz = amsterdam_tz.localize(now_utc)
-    dublin_tz = timezone(stimezone)
-    now_timezone = now_tz.astimezone(dublin_tz)
-    strdate = now_timezone.strftime(fmt)
-
     period = (period if period in periods else '1d')
     metric = (metric if metric in metrics else 'cpu')
     service = (service if service in services else 'blocs-pro')
     rrdfile = settings.RRDPATH + service + '_ecs_mem_cpu_task.rrd'
+
+    fmt = "%d-%m-%Y %H\:%M"
+    stimezone = 'Europe/Dublin'
+    tsdate = datetime.fromtimestamp(rrdtool.last(rrdfile))
+    amsterdam_tz = timezone('Europe/Amsterdam')
+    now_tz = amsterdam_tz.localize(tsdate)
+    dublin_tz = timezone(stimezone)
+    now_timezone = now_tz.astimezone(dublin_tz)
+    strdate = now_timezone.strftime(fmt)
 
     if (metric == 'cpu'):
         filename = createrrdimagecpu(rrdfile, period, strdate)
