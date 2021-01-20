@@ -12,16 +12,12 @@ app = Flask(__name__,static_url_path='/ecs/monitor/static')
 auth = HTTPBasicAuth()
 
 @app.route('/ecs/monitor/img/<service>/<metric>/<period>')
-<<<<<<< HEAD
-def rrdimage(service, metric, period):
-=======
 def chartimage(service, metric, period):
     period = (period if period in periods else '1d')
     metric = (metric if metric in metrics else 'cpu')
     service = (service if service in services else 'blocs-pro')
     rrdfile = settings.RRDPATH + service + '_ecs_mem_cpu_task.rrd'
 
->>>>>>> 01b7e050f9da84e9ab7558982d5ed102268544cc
     fmt = "%d-%m-%Y %H\:%M"
     stimezone = 'Europe/Dublin'
     tsdate = datetime.fromtimestamp(rrdtool.last(rrdfile))
@@ -31,11 +27,6 @@ def chartimage(service, metric, period):
     now_timezone = now_tz.astimezone(dublin_tz)
     strdate = now_timezone.strftime(fmt)
 
-<<<<<<< HEAD
-    rrdfile = settings.RRDPATH + service + '_ecs_mem_cpu_task.rrd'
-
-=======
->>>>>>> 01b7e050f9da84e9ab7558982d5ed102268544cc
     if (metric == 'cpu'):
         filename = createrrdimagecpu(rrdfile, service, period, strdate)
     elif (metric == 'mem'):
