@@ -12,10 +12,7 @@ app = Flask(__name__,static_url_path='/ecs/monitor/static')
 auth = HTTPBasicAuth()
 
 @app.route('/ecs/monitor/img/<service>/<metric>/<period>')
-def chartimage(service, metric, period):
-    period = (period if period in periods else '1d')
-    metric = (metric if metric in metrics else 'cpu')
-    service = (service if service in services else 'blocs-pro')
+def rrdimage(service, metric, period):
     rrdfile = settings.RRDPATH + service + '_ecs_mem_cpu_task.rrd'
 
     fmt = "%d-%m-%Y %H\:%M"
