@@ -11,7 +11,7 @@ app = Flask(__name__,static_url_path='/ecs/monitor/static')
 auth = HTTPBasicAuth()
 
 @app.route('/ecs/monitor/img/<service>/<metric>/<period>')
-def chartimage(service, metric, period):
+def rrdimage(service, metric, period):
     fmt = "%d-%m-%Y %H\:%M"
     stimezone = 'Europe/Dublin'
     now_utc = datetime.datetime.now()
@@ -21,24 +21,29 @@ def chartimage(service, metric, period):
     now_timezone = now_tz.astimezone(dublin_tz)
     strdate = now_timezone.strftime(fmt)
 
-    period = (period if period in periods else '1d')
-    metric = (metric if metric in metrics else 'cpu')
-    service = (service if service in services else 'blocs-pro')
     rrdfile = settings.RRDPATH + service + '_ecs_mem_cpu_task.rrd'
 
     if (metric == 'cpu'):
-        filename = createrrdimagecpu(rrdfile, period, strdate)
+        filename = createrrdimagecpu(rrdfile, service, period, strdate)
     elif (metric == 'mem'):
-        filename = createrrdimagemem(rrdfile, period, strdate)
+        filename = createrrdimagemem(rrdfile, service, period, strdate)
     elif (metric == 'task'):
-        filename = createrrdimagetask(rrdfile, period, strdate)
+        filename = createrrdimagetask(rrdfile, service, period, strdate)
     else:
-        filename = createrrdimagecpu(rrdfile, period, strdate)
+        filename = createrrdimagecpu(rrdfile, service, period, strdate)
     return send_file(filename, mimetype='image/png', cache_timeout=-1)
     
-@app.route('/ecs/monitor/<service>/<metric>')
-def chartpage(service, metric):
-    return render_template('metric.html', metrics=settings.METRICS, services=settings.SERVICES, periods=settings.PRERIODS, metric=metric, service=service, username=auth.username())
+@app.route('/ecs/monitor/services/<service>/')
+def sercices(service):
+    return render_template('services.html', metrics=settings.METRICS, services=settings.SERVICES, periods=settings.PRERIODS, service=service, username=auth.username())
+
+@app.route('/ecs/monitor/metrics/<metric>/')
+def metrics(metric):
+    return render_template('metrics.html', metrics=settings.METRICS, services=settings.SERVICES, periods=settings.PRERIODS, metric=metric, username=auth.username())
+
+@app.route('/ecs/monitor/service-metric/<service>/<metric>/')
+def sercicesmetric(service,metric):
+    return render_template('service-metric.html', metrics=settings.METRICS, services=settings.SERVICES, periods=settings.PRERIODS, metric=metric, service=service, username=auth.username())
 
 @app.route('/ecs/monitor/')
 def index():

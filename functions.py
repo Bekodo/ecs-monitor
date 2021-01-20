@@ -9,15 +9,16 @@ services = settings.SERVICES
 filepath = path.abspath(getcwd())
 filepath += '/rrdtool/img/'
 
-def createrrdimagecpu(rrdfile, period, strdate):  
-    fileimage = filepath + 'cpu-' + period + '.png'
+def createrrdimagecpu(rrdfile, service, period, strdate):  
+    fileimage = filepath + service + '-cpu-' + period + '.png'
     period = periods.get(period, '1d')
     try:
         rrdtool.graph(str(fileimage), "-s", "%s" % period[0], "-e", "now",
             "--imgformat=PNG",
             "--width=380", "--height=140", "--rigid",
-            '--alt-autoscale-max', '--lower-limit=0',
-            "--title=CPU Metrics %s" % period[1],
+            '--lower-limit=0',
+            "--upper-limit=100",
+            "--title=CPU Metrics %s - %s " % (period[1], service),
             "--color=CANVAS#222225",
             "--color=FONT#FFFFFF",
             "--color=BACK#222225",
@@ -25,6 +26,7 @@ def createrrdimagecpu(rrdfile, period, strdate):
             "--font=UNIT:8:",
             "--watermark=Bekodo",
             "--border=0",
+            "HRULE:60#ec4646",
             "DEF:cpu=%s:cpu:AVERAGE" % rrdfile,
             "LINE1:cpu#00CF00FF:Cpu",
             "AREA:cpu#00CF0033",
@@ -36,15 +38,16 @@ def createrrdimagecpu(rrdfile, period, strdate):
         print(e)
     return fileimage
 
-def createrrdimagemem(rrdfile, period, strdate):
-    fileimage = filepath + 'mem-' + period + '.png'
+def createrrdimagemem(rrdfile, service, period, strdate):
+    fileimage = filepath + service + '-mem-' + period + '.png'
     period = periods.get(period, '1d')
     try:
         rrdtool.graph(str(fileimage), "-s", "%s" % period[0], "-e", "now",
             "--imgformat=PNG",
             "--width=380", "--height=140", "--rigid",
-            '--alt-autoscale-max', '--lower-limit=0',
-            "--title=Memory Metrics %s" % period[1],
+            '--lower-limit=0',
+            "--upper-limit=100",
+            "--title=Memory Metrics %s - %s " % (period[1], service),
             "--color=CANVAS#222225",
             "--color=FONT#FFFFFF",
             "--color=BACK#222225",
@@ -52,6 +55,7 @@ def createrrdimagemem(rrdfile, period, strdate):
             "--font=UNIT:8:",
             "--watermark=Bekodo",
             "--border=0",
+            "HRULE:60#ec4646",
             "DEF:mem=%s:mem:AVERAGE" % rrdfile,
             "LINE1:mem#005199FF:Mem",
             "AREA:mem#00519933",
@@ -63,15 +67,16 @@ def createrrdimagemem(rrdfile, period, strdate):
         print(e)
     return fileimage
 
-def createrrdimagetask(rrdfile, period, strdate):
-    fileimage = filepath + 'task-' + period + '.png'
+def createrrdimagetask(rrdfile, service, period, strdate):
+    fileimage = filepath + service + '-task-' + period + '.png'
     period = periods.get(period, '1d')
     try:
         rrdtool.graph(str(fileimage), "-s", "%s" % period[0], "-e", "now",
             "--imgformat=PNG",
             "--width=380", "--height=140", "--rigid",
-            '--alt-autoscale-max', '--lower-limit=0',
-            "--title=Tasks Metrics %s" % period[1],
+            '--alt-autoscale-max',
+            '--lower-limit=0',
+            "--title=Tasks Metrics %s - %s " % (period[1], service),
             "--color=CANVAS#222225",
             "--color=FONT#FFFFFF",
             "--color=BACK#222225",

@@ -20,7 +20,7 @@
 
     <!-- Custom styles for this template-->
     <link href="/ecs/monitor/static/css/sb-admin-2.min.css" rel="stylesheet">
-    
+
 </head>
 
 <body id="page-top">
@@ -43,7 +43,7 @@
             <hr class="sidebar-divider my-0">
 
             <!-- Nav Item - Dashboard -->
-            <li class="nav-item active">
+            <li class="nav-item">
                 <a class="nav-link" href="/ecs/monitor">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
@@ -74,7 +74,7 @@
             </li>
 
             <!-- Nav Item - Utilities Collapse Menu -->
-            <li class="nav-item">
+            <li class="nav-item active">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities" aria-expanded="true" aria-controls="collapseUtilities">
                     <i class="fas fa-fw fa-wrench"></i>
                     <span>Metrics</span>
@@ -133,27 +133,24 @@
                 <div class="container-fluid">
 
                     <!-- Page Heading -->
-                    <h1 class="h3 mb-4 text-gray-800">Dashboard</h1>
-
-                    {% for service in services %}
+                    <h1 class="h3 mb-4 text-gray-800">{{ metric }}</h1>
                     <!-- Content Row -->
                     <div class="row">
                         <!-- <div class="col-6 col-lg-3"> -->
                             <!-- <div class="card-header py-3">
                                 <h6 class="m-0 font-weight-bold text-gray-800">{{ service }}</h6>
                             </div> -->
-                            {% for metric in metrics %}
+                            {% for service in services %}
                             <div class="card-body">
                                 <div class="chart-area">
                                     <div class="row no-gutters align-items-center">
-                                        <img src="/ecs/monitor/img/{{ service }}/{{ metric }}/1d" class="img-fluid" alt="Responsive image">
+                                        <a href="/ecs/monitor/service-metric/{{ service }}/{{ metric }}/"><img src="/ecs/monitor/img/{{ service }}/{{ metric }}/1d" class="img-fluid" alt="Responsive image"></a>
                                     </div>
                                 </div>
                             </div>
                             {% endfor %}
                         <!-- </div> -->
                     </div>
-                    {% endfor %}
                 </div>
             <!-- End of Main Content -->
 
