@@ -1,3 +1,0 @@
-sqlite3 ecs_cluster.db << EOF
-CREATE TABLE IF NOT EXISTS ecs_cluster_blocs_pro (TIME TEXT PRIMARY KEY, CPU REAL, TASKCOUNT INTEGER);
-EOF
