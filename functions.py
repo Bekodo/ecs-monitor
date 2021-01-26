@@ -7,7 +7,7 @@ metrics = settings.METRICS
 services = settings.SERVICES
 
 filepath = path.abspath(getcwd())
-filepath += '/rrdtool/img/'
+filepath += settings.IMGPATH
 
 def createrrdimagecpu(rrdfile, service, period, strdate):  
     fileimage = filepath + service + '-cpu-' + period + '.png'

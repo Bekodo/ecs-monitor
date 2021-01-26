@@ -115,7 +115,6 @@ def worker(key, secretkey, region, service, cluster, arn, rrdfile):
     ClodWatch.saveData(data)
 
 if __name__ == '__main__':
-    
     currentdir = pathlib.PurePosixPath(os.path.dirname(os.path.realpath(__file__)))
     rootdir = currentdir / '..'
     rrddir = rootdir / 'rrd'

@@ -1,4 +1,10 @@
-Flask
-flask_httpauth
-pytz
-rrdtool
+Flask==1.1.2
+Flask-HTTPAuth==4.2.0
+Jinja2==2.11.2
+pytz==2020.5
+rrdtool==0.1.15
+uWSGI==2.0.19.1
+configparser==5.0.1
+pathlib==1.0.1
+boto3==1.16.59
+botocore==1.19.59

@@ -1,6 +1,0 @@
-Flask==1.1.2
-Flask-HTTPAuth==4.2.0
-Jinja2==2.11.2
-pytz==2020.5
-rrdtool==0.1.1
-uWSGI==2.0.19.1

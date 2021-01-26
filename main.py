@@ -7,13 +7,15 @@ import tempfile
 from datetime import datetime
 from pytz import timezone
 from pprint import pprint
+from os import path, getcwd
 
 app = Flask(__name__,static_url_path='/ecs/monitor/static')
 auth = HTTPBasicAuth()
 
 @app.route('/ecs/monitor/img/<service>/<metric>/<period>')
 def rrdimage(service, metric, period):
-    rrdfile = settings.RRDPATH + service + '_ecs_mem_cpu_task.rrd'
+    filepath = path.abspath(getcwd())
+    rrdfile = filepath + settings.RRDPATH + service + '_ecs_mem_cpu_task.rrd'
 
     fmt = "%d-%m-%Y %H\:%M"
     stimezone = 'Europe/Dublin'
