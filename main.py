@@ -50,5 +50,5 @@ def sercicesmetric(service,metric):
 
 @app.route('/ecs/monitor/')
 def index():
-    return render_template('index.html', metrics=settings.METRICS, services=settings.SERVICES, username=auth.username())
+    return render_template('index.html', metrics=settings.METRICS, services=settings.SERVICES, favorites=settings.FAVORITES, username=auth.username())
 

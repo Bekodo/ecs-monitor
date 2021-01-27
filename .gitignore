@@ -142,3 +142,4 @@ rrdtool/custom_check_cpu_num_task_rrd.py
 test/*
 command/config.ini
 rrd/*
+img/*

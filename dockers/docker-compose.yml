@@ -1,6 +1,6 @@
 version: "3"
 services:
-  agnia-backend:
+  ecs-monitor:
     image: ecscputascks
     volumes:
       - ../:/opt/monitor-ecs
