@@ -1,4 +1,4 @@
-#!/opt/local/bin/python3.7
+#!/usr/bin/python3.6
 
 import multiprocessing
 import configparser
@@ -10,10 +10,7 @@ from datetime import datetime, timedelta
 from pytz import timezone
 import rrdtool
 
-from pprint import pprint
-
 class Monitor(object):
-    stimezone = 'Europe/Dublin'
     rrdfile = ''
     stimezone = 'Europe/Dublin' #Added for setup
     cluster = '' #Added for setup
@@ -112,6 +109,7 @@ def worker(key, secretkey, region, service, cluster, arn, rrdfile):
     data['tasks'] = ClodWatch.getTasksCount()
     data['cpu'] = ClodWatch.getMetric('CPUUtilization')
     data['mem'] = ClodWatch.getMetric('MemoryUtilization')
+    print('{} - {} task {} cpu {} mem {}'.format(data['cpu']['date'].strftime("%d/%m/%Y %H:%M:%S"), service, data['tasks'], data['cpu']['CPUUtilization'], data['mem']['MemoryUtilization']))
     ClodWatch.saveData(data)
 
 if __name__ == '__main__':

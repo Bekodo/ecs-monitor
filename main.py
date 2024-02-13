@@ -8,6 +8,8 @@ from datetime import datetime
 from pytz import timezone
 from pprint import pprint
 from os import path, getcwd
+import pytz
+
 
 app = Flask(__name__,static_url_path='/ecs/monitor/static')
 auth = HTTPBasicAuth()
@@ -18,13 +20,10 @@ def rrdimage(service, metric, period):
     rrdfile = filepath + settings.RRDPATH + service + '_ecs_mem_cpu_task.rrd'
 
     fmt = "%d-%m-%Y %H\:%M"
-    stimezone = 'Europe/Dublin'
     tsdate = datetime.fromtimestamp(rrdtool.last(rrdfile))
-    amsterdam_tz = timezone('Europe/Amsterdam')
+    amsterdam_tz = pytz.timezone('Europe/Amsterdam')
     now_tz = amsterdam_tz.localize(tsdate)
-    dublin_tz = timezone(stimezone)
-    now_timezone = now_tz.astimezone(dublin_tz)
-    strdate = now_timezone.strftime(fmt)
+    strdate = now_tz.strftime(fmt)
 
     if (metric == 'cpu'):
         filename = createrrdimagecpu(rrdfile, service, period, strdate)
