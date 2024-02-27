@@ -1,31 +1,85 @@
-#!/usr/bin/python3
-
 import settings
-from flask import Flask, g, render_template, redirect, url_for
-from functions import get_db, query_db
+from functions import periods, metrics, services, createrrdimagecpu, createrrdimagemem, createrrdimagetask, static_createrrdimagecpu, static_createrrdimagemem, static_createrrdimagetask
+from flask import Flask, render_template, send_file, request, make_response
+from flask_httpauth import HTTPBasicAuth
+from functools import wraps
+from os import path, getcwd
+import os
+import click
 
-app = Flask(__name__,static_url_path='/ecs/blocs-pro/static')
 
-@app.route('/ecs/blocs-pro/<period>')
-def graphs(period):
-    periods = {'3h': '-3 hours', '6h': '-6 hours', '12h': '-12 hours', '1d': '-1 days', '3d': '-3 days', '1w': '-7 days', '1m': '-1 month',}
-    period = (period if period in periods else '1d')
-    sqlperiod = periods.get(period, '-1 days')
-    context = {}
-    sql = "select TIME,CPU,TASKCOUNT,MEM from ecs_cluster_blocs_pro WHERE TIME > datetime('now', '" + sqlperiod + "') ORDER BY TIME ASC"
-    for line in query_db(sql):
-        cpu = (line[1] if line[1] else 0)
-        task = (line[2] if line[2] else 0)
-        mem = (line[3] if line[3] else 0)
-        context[line[0]]={'cpu':cpu,'task':task,'mem':mem}
-    return render_template('char.html', title='Graph Stats', period=period, periods=periods, context=context)
+app = Flask(__name__,static_url_path='/ecs/monitor/static')
+auth = HTTPBasicAuth()
 
-@app.route('/ecs/blocs-pro/')
+filepath = path.abspath(getcwd())
+static = os.getenv('STATIC', False)
+
+def no_cache(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        resp = make_response(f(*args, **kwargs))
+        resp.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0, max-age=0'
+        resp.headers['Pragma'] = 'no-cache'
+        resp.headers['Expires'] = '-1'
+        return resp
+    return decorated_function
+
+@app.route('/ecs/monitor/img/<service>/<metric>/<period>')
+@no_cache
+def rrdimage(service, metric, period):
+    rrdfile = filepath + settings.RRDPATH + service + '_ecs_mem_cpu_task.rrd'
+
+    if static == "True": 
+        if (metric == 'cpu'):
+            filename = static_createrrdimagecpu(service, period)
+        elif (metric == 'mem'):
+            filename = static_createrrdimagemem(service, period)
+        elif (metric == 'task'):
+            filename = static_createrrdimagetask(service, period)
+    else:
+        if (metric == 'cpu'):
+            filename = createrrdimagecpu(rrdfile, service, period)
+        elif (metric == 'mem'):
+            filename = createrrdimagemem(rrdfile, service, period)
+        elif (metric == 'task'):
+            filename = createrrdimagetask(rrdfile, service, period)
+        
+    return send_file(filename, mimetype='image/png')
+    
+@app.route('/ecs/monitor/services/<service>/')
+def sercices(service):
+    return render_template('services.html', metrics=settings.METRICS, services=settings.SERVICES, periods=settings.PRERIODS, service=service, username=auth.username())
+
+@app.route('/ecs/monitor/metrics/<metric>/')
+def metrics(metric):
+    return render_template('metrics.html', metrics=settings.METRICS, services=settings.SERVICES, periods=settings.PRERIODS, metric=metric, username=auth.username())
+
+@app.route('/ecs/monitor/service-metric/<service>/<metric>/')
+def sercicesmetric(service,metric):
+    return render_template('service-metric.html', metrics=settings.METRICS, services=settings.SERVICES, periods=settings.PRERIODS, metric=metric, service=service, username=auth.username())
+
+@app.route('/ecs/monitor/')
 def index():
-    return redirect(url_for('graphs',period='1d'))
+    return render_template('index.html', metrics=settings.METRICS, services=settings.SERVICES, favorites=settings.FAVORITES, username=auth.username())
 
-@app.teardown_appcontext
-def close_connection(exception):
-    db = getattr(g, '_database', None)
-    if db is not None:
-        db.close()
+@app.cli.command('generatecpu')
+@click.argument('service')
+@click.argument('period')
+def generatecpu(service, period):
+    rrdfile = filepath + settings.RRDPATH + service + '_ecs_mem_cpu_task.rrd'
+    createrrdimagecpu(rrdfile, service, period)
+
+@app.cli.command('generatemem')
+@click.argument('service')
+@click.argument('period')
+def generatemem(service, period):
+    rrdfile = filepath + settings.RRDPATH + service + '_ecs_mem_cpu_task.rrd'
+    createrrdimagemem(rrdfile, service, period)
+
+@app.cli.command('generatetask')
+@click.argument('service')
+@click.argument('period')
+def generatetask(service, period):
+    rrdfile = filepath + settings.RRDPATH + service + '_ecs_mem_cpu_task.rrd'
+    createrrdimagetask(rrdfile, service, period)
+
