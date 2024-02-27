@@ -1,7 +1,8 @@
 import settings
 from functions import periods, metrics, services, createrrdimagecpu, createrrdimagemem, createrrdimagetask, static_createrrdimagecpu, static_createrrdimagemem, static_createrrdimagetask
-from flask import Flask, render_template, send_file, request
+from flask import Flask, render_template, send_file, request, make_response
 from flask_httpauth import HTTPBasicAuth
+from functools import wraps
 from os import path, getcwd
 import os
 import click
@@ -13,11 +14,22 @@ auth = HTTPBasicAuth()
 filepath = path.abspath(getcwd())
 static = os.getenv('STATIC', False)
 
+def no_cache(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        resp = make_response(f(*args, **kwargs))
+        resp.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0, max-age=0'
+        resp.headers['Pragma'] = 'no-cache'
+        resp.headers['Expires'] = '-1'
+        return resp
+    return decorated_function
+
 @app.route('/ecs/monitor/img/<service>/<metric>/<period>')
+@no_cache
 def rrdimage(service, metric, period):
     rrdfile = filepath + settings.RRDPATH + service + '_ecs_mem_cpu_task.rrd'
 
-    if static: 
+    if static == "True": 
         if (metric == 'cpu'):
             filename = static_createrrdimagecpu(service, period)
         elif (metric == 'mem'):
