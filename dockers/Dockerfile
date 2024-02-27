@@ -1,17 +1,12 @@
-FROM centos:8
+FROM python:3.9.18
 
 RUN mkdir -p /opt/monitor-ecs
 WORKDIR /opt/monitor-ecs
 
-RUN yum install python3 python3-devel python3-pip rrdtool.x86_64 -y
-RUN dnf groupinstall "Development Tools" -y
-RUN rpm -Uvh http://mirror.centos.org/centos/8/PowerTools/x86_64/os/Packages/rrdtool-devel-1.7.0-16.el8.x86_64.rpm
-ADD python-requirements.txt /tmp
-RUN pip3 install -r /tmp/python-requirements.txt
-RUN dnf groupremove "Development Tools" -y
-
-
-ADD ./ /opt/monitor-ecs/
+RUN apt update
+RUN apt install -y librrd-dev
+ADD . /opt/monitor-ecs
+RUN pip install -r /opt/monitor-ecs/dockers/python-requirements.txt
 
 EXPOSE 5000
-CMD ["flask", "run", "--host=0.0.0.0"]
+CMD ["/usr/bin/flask", "run", "--host=0.0.0.0"]

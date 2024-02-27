@@ -1,14 +1,13 @@
 version: "3"
 services:
   ecs-monitor:
-    image: ecscputascks
+    image: ecsmonitor
     volumes:
       - ../:/opt/monitor-ecs
     ports:
-      - "5000:5000"
+      - "5005:5000"
     environment:
-      - FLASK_ENV=development
+      - FLASK_DEBUG=True
       - FLASK_APP=main.py
-
-    # command: tail -f /var/log/dnf.log
-    command: flask run --host=0.0.0.0
+    #command: /usr/bin/flask run --host=0.0.0.0
+    command: tail -f /dev/null

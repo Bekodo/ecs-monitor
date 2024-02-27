@@ -1,6 +1,8 @@
 import settings
 import rrdtool
 from os import path, getcwd
+from datetime import datetime
+import pytz
 
 periods = settings.PRERIODS
 metrics = settings.METRICS
@@ -9,9 +11,34 @@ services = settings.SERVICES
 filepath = path.abspath(getcwd())
 filepath += settings.IMGPATH
 
-def createrrdimagecpu(rrdfile, service, period, strdate):  
+
+def getstrdate(rrdfile):
+    fmt = "%d-%m-%Y %H\:%M"
+    tsdate = datetime.fromtimestamp(rrdtool.last(rrdfile))
+    amsterdam_tz = pytz.timezone('Europe/Amsterdam')
+    now_tz = amsterdam_tz.localize(tsdate)
+    return now_tz.strftime(fmt)
+    
+
+def static_createrrdimagecpu(service, period):
+    fileimage = filepath + service + '-cpu-' + period + '.png'
+    return fileimage
+
+
+def static_createrrdimagemem(service, period):
+    fileimage = filepath + service + '-mem-' + period + '.png'
+    return fileimage
+
+
+def static_createrrdimagetask(service, period):
+    fileimage = filepath + service + '-task-' + period + '.png'
+    return fileimage
+
+
+def createrrdimagecpu(rrdfile, service, period):  
     fileimage = filepath + service + '-cpu-' + period + '.png'
     period = periods.get(period, '1d')
+    strdate=getstrdate(rrdfile)
     try:
         rrdtool.graph(str(fileimage), "-s", "%s" % period[0], "-e", "now",
             "--imgformat=PNG",
@@ -38,9 +65,11 @@ def createrrdimagecpu(rrdfile, service, period, strdate):
         print(e)
     return fileimage
 
-def createrrdimagemem(rrdfile, service, period, strdate):
+
+def createrrdimagemem(rrdfile, service, period):
     fileimage = filepath + service + '-mem-' + period + '.png'
     period = periods.get(period, '1d')
+    strdate=getstrdate(rrdfile)
     try:
         rrdtool.graph(str(fileimage), "-s", "%s" % period[0], "-e", "now",
             "--imgformat=PNG",
@@ -67,9 +96,11 @@ def createrrdimagemem(rrdfile, service, period, strdate):
         print(e)
     return fileimage
 
-def createrrdimagetask(rrdfile, service, period, strdate):
+
+def createrrdimagetask(rrdfile, service, period):
     fileimage = filepath + service + '-task-' + period + '.png'
     period = periods.get(period, '1d')
+    strdate=getstrdate(rrdfile)
     try:
         rrdtool.graph(str(fileimage), "-s", "%s" % period[0], "-e", "now",
             "--imgformat=PNG",

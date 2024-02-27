@@ -1,39 +1,38 @@
 import settings
-from functions import periods, metrics, services, createrrdimagecpu, createrrdimagemem, createrrdimagetask
+from functions import periods, metrics, services, createrrdimagecpu, createrrdimagemem, createrrdimagetask, static_createrrdimagecpu, static_createrrdimagemem, static_createrrdimagetask
 from flask import Flask, render_template, send_file, request
 from flask_httpauth import HTTPBasicAuth
-import rrdtool
-import tempfile
-from datetime import datetime
-from pytz import timezone
-from pprint import pprint
 from os import path, getcwd
-import pytz
+import os
+import click
 
 
 app = Flask(__name__,static_url_path='/ecs/monitor/static')
 auth = HTTPBasicAuth()
 
+filepath = path.abspath(getcwd())
+static = os.getenv('STATIC', False)
+
 @app.route('/ecs/monitor/img/<service>/<metric>/<period>')
 def rrdimage(service, metric, period):
-    filepath = path.abspath(getcwd())
     rrdfile = filepath + settings.RRDPATH + service + '_ecs_mem_cpu_task.rrd'
 
-    fmt = "%d-%m-%Y %H\:%M"
-    tsdate = datetime.fromtimestamp(rrdtool.last(rrdfile))
-    amsterdam_tz = pytz.timezone('Europe/Amsterdam')
-    now_tz = amsterdam_tz.localize(tsdate)
-    strdate = now_tz.strftime(fmt)
-
-    if (metric == 'cpu'):
-        filename = createrrdimagecpu(rrdfile, service, period, strdate)
-    elif (metric == 'mem'):
-        filename = createrrdimagemem(rrdfile, service, period, strdate)
-    elif (metric == 'task'):
-        filename = createrrdimagetask(rrdfile, service, period, strdate)
+    if static: 
+        if (metric == 'cpu'):
+            filename = static_createrrdimagecpu(service, period)
+        elif (metric == 'mem'):
+            filename = static_createrrdimagemem(service, period)
+        elif (metric == 'task'):
+            filename = static_createrrdimagetask(service, period)
     else:
-        filename = createrrdimagecpu(rrdfile, service, period, strdate)
-    return send_file(filename, mimetype='image/png', cache_timeout=-1)
+        if (metric == 'cpu'):
+            filename = createrrdimagecpu(rrdfile, service, period)
+        elif (metric == 'mem'):
+            filename = createrrdimagemem(rrdfile, service, period)
+        elif (metric == 'task'):
+            filename = createrrdimagetask(rrdfile, service, period)
+        
+    return send_file(filename, mimetype='image/png')
     
 @app.route('/ecs/monitor/services/<service>/')
 def sercices(service):
@@ -50,4 +49,25 @@ def sercicesmetric(service,metric):
 @app.route('/ecs/monitor/')
 def index():
     return render_template('index.html', metrics=settings.METRICS, services=settings.SERVICES, favorites=settings.FAVORITES, username=auth.username())
+
+@app.cli.command('generatecpu')
+@click.argument('service')
+@click.argument('period')
+def generatecpu(service, period):
+    rrdfile = filepath + settings.RRDPATH + service + '_ecs_mem_cpu_task.rrd'
+    createrrdimagecpu(rrdfile, service, period)
+
+@app.cli.command('generatemem')
+@click.argument('service')
+@click.argument('period')
+def generatemem(service, period):
+    rrdfile = filepath + settings.RRDPATH + service + '_ecs_mem_cpu_task.rrd'
+    createrrdimagemem(rrdfile, service, period)
+
+@app.cli.command('generatetask')
+@click.argument('service')
+@click.argument('period')
+def generatetask(service, period):
+    rrdfile = filepath + settings.RRDPATH + service + '_ecs_mem_cpu_task.rrd'
+    createrrdimagetask(rrdfile, service, period)
 
