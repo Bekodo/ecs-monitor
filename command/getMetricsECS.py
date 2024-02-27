@@ -126,7 +126,7 @@ if __name__ == '__main__':
 
     for section_name in parser:
         section = parser[section_name]
-        if section_name is not 'DEFAULT':
+        if section_name != 'DEFAULT':
             for name in section:
                 if name == 'key':
                     key = section[name]
